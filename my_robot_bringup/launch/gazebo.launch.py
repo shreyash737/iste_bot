@@ -27,6 +27,17 @@ def generate_launch_description():
     robot_description_xml = robot_description_config.toxml()
     
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
+        # Fix for Frame Mismatch
+    # Replace 'ign_scan_frame' with whatever 'ros2 topic echo /scan' showed you
+    fix_lidar_frame = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='fix_lidar_frame',
+        arguments=['0', '0', '0', '0', '0', '0', 'lidar_link', 'ign_scan_frame'],
+        parameters=[{'use_sim_time': True}],
+        output='screen'
+    )
     
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
@@ -170,5 +181,6 @@ def generate_launch_description():
         static_tf,
         delayed_spawn,
         delayed_slam,
-        delayed_rviz
+        delayed_rviz,
+        ix_lidar_frame,
     ])

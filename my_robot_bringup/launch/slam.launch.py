@@ -116,6 +116,20 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen'
     )
+
+        # Fix for Frame Mismatch
+    # Replace 'ign_scan_frame' with whatever 'ros2 topic echo /scan' showed you
+        # FIX FOR LIDAR FRAME MISMATCH
+    # Replace 'my_robot/base_link/lidar_sensor' with the ACTUAL frame_id you found in Step 2
+    # If you used 'lidar', put 'lidar' there.
+    fix_lidar_frame = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='fix_lidar_frame',
+        arguments=['0', '0', '0', '0', '0', '0', 'lidar_link', 'my_robot/base_footprint/lidar_sensor'],
+        parameters=[{'use_sim_time': True}],
+        output='screen'
+    )
     
     # Delayed actions
     delayed_spawn = TimerAction(period=3.0, actions=[spawn_robot])
@@ -130,5 +144,6 @@ def generate_launch_description():
         static_tf_odom,
         delayed_spawn,
         delayed_slam,
-        delayed_rviz
+        delayed_rviz,
+       fix_lidar_frame,
     ])
